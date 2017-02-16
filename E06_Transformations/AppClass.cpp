@@ -18,7 +18,10 @@ void AppClass::InitVariables(void)
 	m_pTorus = new PrimitiveClass();
 
 	//Initializing the primitives
-	m_pSphere->GenerateSphere(0.5f, 5, REWHITE);
+	m_pSphere->GenerateSphere(0.5f, 5, REWHITE); 
+	// REWHITE is a vector3
+
+	m_pCube->GenerateCube(1, RERED);
 }
 
 void AppClass::Update(void)
@@ -27,7 +30,10 @@ void AppClass::Update(void)
 	m_m4Sphere = glm::translate(IDENTITY_M4, vector3(2.5f, 2.5f, 0.0f));
 
 	//This matrices will scale them to the right size
-	m_m4Sphere = glm::scale(m_m4Sphere, vector3(2.0f, 2.0f, 2.0f));
+	m_m4Sphere = m_m4Sphere * glm::scale(IDENTITY_M4, vector3(2.0f, 2.0f, 2.0f));
+	//m_m4Sphere = glm::scale(m_m4Sphere, vector3(2.0f, 2.0f, 2.0f));
+
+	m_m4Cube = glm::translate(IDENTITY_M4, vector3(1, 0, 0));
 
 	//Indicate the FPS
 	int nFPS = m_pSystem->GetFPS();
@@ -48,6 +54,7 @@ void AppClass::Display(void)
 
 	//Renders the meshes using the specified position given by the matrix and in the specified color
 	m_pSphere->Render(m4Projection, m4View, m_m4Sphere);
+	m_pCube->Render(m4Projection, m4View, m_m4Cube);
 	
 	//Render the grid based on the camera's mode:
 	m_pMeshMngr->AddGridToRenderListBasedOnCamera(m_pCameraMngr->GetCameraMode());

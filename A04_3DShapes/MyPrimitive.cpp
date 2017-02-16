@@ -30,6 +30,16 @@ void MyPrimitive::AddQuad(vector3 a_vBottomLeft, vector3 a_vBottomRight, vector3
 	AddVertexPosition(a_vBottomRight);
 	AddVertexPosition(a_vTopRight);
 }
+
+
+void MyPrimitive::AddTri(vector3 a_vBottomLeft, vector3 a_vBottomRight, vector3 a_vTopLeft)
+{
+	AddVertexPosition(a_vBottomLeft);
+	AddVertexPosition(a_vBottomRight);
+	AddVertexPosition(a_vTopLeft);
+
+}
+
 void MyPrimitive::GeneratePlane(float a_fSize, vector3 a_v3Color)
 {
 	if (a_fSize < 0.01f)
@@ -65,10 +75,13 @@ void MyPrimitive::GenerateCube(float a_fSize, vector3 a_v3Color)
 	Release();
 	Init();
 
+	// Half of the unit
 	float fValue = 0.5f * a_fSize;
 	//3--2
 	//|  |
 	//0--1
+
+	
 	vector3 point0(-fValue, -fValue, fValue); //0
 	vector3 point1(fValue, -fValue, fValue); //1
 	vector3 point2(fValue, fValue, fValue); //2
@@ -106,21 +119,46 @@ void MyPrimitive::GenerateCone(float a_fRadius, float a_fHeight, int a_nSubdivis
 	if (a_nSubdivisions > 360)
 		a_nSubdivisions = 360;
 
-	Release();
-	Init();
+	Release(); // Release memory
+	Init(); // initialize pointers to index 0
 
 	//Your code starts here
 	float fValue = 0.5f;
 	//3--2
 	//|  |
 	//0--1
+
+	std::vector<vector3> point;
+	//point.push_back(vector3(-fValue, -fValue, fValue));
+	//point.push_back(vector3(fValue, -fValue, fValue));
+	//point.push_back(vector3(fValue, fValue, fValue));
+
+
 	vector3 point0(-fValue, -fValue, fValue); //0
 	vector3 point1(fValue, -fValue, fValue); //1
 	vector3 point2(fValue, fValue, fValue); //2
 	vector3 point3(-fValue, fValue, fValue); //3
+	float theta = 0;
+	//float steps = 360.0 / static_cast<float>(a_nSubdivisions);
+	float steps = 2 * PI / a_nSubdivisions;
+	point.push_back(vector3(0.0, 0.0, 0.0)); // for origin
+	
+	for (int i = 0; i < a_nSubdivisions; i++) {
+		//theta = glm::radians(theta);
+		point.push_back(vector3(cos(theta), sin(theta), 0));
+		theta += steps;
+	}
 
-	AddQuad(point0, point1, point3, point2);
+	//AddTri(point[0], point[1], point[2]);
+	//AddTri(point[0], point[2], point[3]);
+	//AddTri(point[0], point[3], point[4]);
+	//AddTri(point[0], point[4], point[5]);
 
+	
+	for (int i = 1; i < a_nSubdivisions-1; i++) {
+		AddTri(point[0], point[i], point[i+1]);
+	}
+	AddTri(point[0], point[a_nSubdivisions], point[1]);
 	//Your code ends here
 	CompileObject(a_v3Color);
 }
