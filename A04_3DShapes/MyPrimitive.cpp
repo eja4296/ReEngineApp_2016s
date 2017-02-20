@@ -394,13 +394,20 @@ void MyPrimitive::GenerateSphere(float a_fRadius, int a_nSubdivisions, vector3 a
 	AddTri(point[0], point[a_nSubdivisions], point[1]);
 	
 	// Make subdivisions of cirlce
-	for (int j = 1; j < a_nSubdivisions; j++) {
+	for (int j = 1; j < a_nSubdivisions-1; j++) {
 		for (int i = 1; i < a_nSubdivisions; i++) {
 			AddQuad(point[i + (a_nSubdivisions * j)], point[i + 1 + (a_nSubdivisions * j)], point[i + ((j-1)*a_nSubdivisions)], point[i + 1 + ((j - 1)*a_nSubdivisions)]);
 		}
 		AddQuad(point[(j + 1) * a_nSubdivisions], point[1 + (j * a_nSubdivisions)], point[j * a_nSubdivisions], point[1 + ((j-1) * a_nSubdivisions)]);
 	}
 
+	// Make bottom of circle
+	point.push_back(vector3(0.0, -a_fRadius, 0.0));
+	for (int i = 1; i < a_nSubdivisions; i++) {
+		AddTri(point[(a_nSubdivisions * a_nSubdivisions) + 1], point[i + 1 + (a_nSubdivisions * (a_nSubdivisions - 2))], point[i + (a_nSubdivisions * (a_nSubdivisions - 2))]);
+	}
+
+	AddTri(point[a_nSubdivisions * (a_nSubdivisions - 1)], point[(a_nSubdivisions * a_nSubdivisions) + 1], point[1 + (a_nSubdivisions * (a_nSubdivisions - 2))]);
 	
 	//Your code ends here
 	CompileObject(a_v3Color);
