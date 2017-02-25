@@ -1,8 +1,7 @@
 #include "AppClass.h"
-#include "iostream"
 void AppClass::InitWindow(String a_sWindowName)
 {
-	super::InitWindow("E06 Lerp"); // Window Name
+	super::InitWindow("RotationsDemo"); // Window Name
 
 	// Set the clear color based on Microsoft's CornflowerBlue (default in XNA)
 	//if this line is in Init Application it will depend on the .cfg file, if it
@@ -15,7 +14,6 @@ void AppClass::InitWindow(String a_sWindowName)
 
 void AppClass::InitVariables(void)
 {
-	
 	//Reset the selection to -1, -1
 	m_selection = std::pair<int, int>(-1, -1);
 	//Set the camera position
@@ -24,38 +22,7 @@ void AppClass::InitVariables(void)
 		vector3(0.0f, 2.5f, 0.0f),//What Im looking at
 		REAXISY);//What is up
 	//Load a model onto the Mesh manager
-	//m_pMeshMngr->LoadModel("Lego\\Unikitty.bto", "Unikitty");
-	
-	// New for E06 Lerp ////////////////////////////////////
-	// Set a new camera position
-	m_pCameraMngr->SetPosition(vector3(0.0f, 0.0f, 35.0f));
-	
-	// make a random number of spheres
-	srand(time(NULL));
-	m_nObjects = rand() % 23 + 5;
-	
-	// vectors for start and end for LERP
-	vector3 v3Start = vector3(-m_nObjects, 0.0f, 0.0f);
-	vector3 v3End = vector3(m_nObjects, 0.0f, 0.0f);
-
-	// create arrays for spheres and the matrices
-	m_pSphere = new PrimitiveClass[m_nObjects];
-	m_pMatrix = new matrix4[m_nObjects];
-
-	for (int i = 0; i < m_nObjects; i++) {
-		// map the percent value
-		float fPercent = MapValue(static_cast<float>(i), 0.0f, static_cast<float>(m_nObjects), 0.0f, 1.0f);
-		
-		// Generate a new sphere
-		m_pSphere[i].GenerateSphere(1, 5, vector3(fPercent, 0.0f, 0.0f));
-
-		// LERP based on v3start, v3end, and fPercent
-		vector3 v3Current = glm::lerp(v3Start, v3End, fPercent);
-		
-		// translate the sphere based on the v3Current
-		m_pMatrix[i] = glm::translate(v3Current);
-	}
-
+	m_pMeshMngr->LoadModel("Minecraft\\Steve.obj", "Steve");
 }
 
 void AppClass::Update(void)
@@ -72,9 +39,17 @@ void AppClass::Update(void)
 
 	//Call the arcball method
 	ArcBall();
+
+	//m_v3Orientation = vector3(90.0, 0.0, 0.0);
+
+	m_m4Orientation = glm::rotate(m_m4Orientation,m_v3Orientation.x, vector3(1.0, 0.0, 0.0));
+	m_m4Orientation = glm::rotate(m_m4Orientation, m_v3Orientation.y, vector3(0.0, 1.0, 0.0));
+	m_m4Orientation = glm::rotate(m_m4Orientation, m_v3Orientation.z, vector3(0.0, 0.0, 1.0));
+	//glm::rotate()
 	
 	//Set the model matrix for the first model to be the arcball
-	m_pMeshMngr->SetModelMatrix(ToMatrix4(m_qArcBall), 0);
+	m_pMeshMngr->SetModelMatrix(m_m4Orientation, "Steve");
+	//m_pMeshMngr->SetModelMatrix(ToMatrix4(m_qArcBall), 0);
 	
 	//Adds all loaded instance to the render list
 	m_pMeshMngr->AddSkyboxToRenderList();
@@ -98,24 +73,14 @@ void AppClass::Display(void)
 {
 	//clear the screen
 	ClearScreen();
-
-	// render each sphere using its own matrix for position
-	for (int i = 0; i < m_nObjects; i++) {
-		m_pSphere[i].Render(m_pCameraMngr->GetProjectionMatrix(), m_pCameraMngr->GetViewMatrix(), m_pMatrix[i]);
-	}
-
 	//Render the grid based on the camera's mode:
-	//m_pMeshMngr->AddGridToRenderListBasedOnCamera(m_pCameraMngr->GetCameraMode());
+	m_pMeshMngr->AddGridToRenderListBasedOnCamera(m_pCameraMngr->GetCameraMode());
 	m_pMeshMngr->Render(); //renders the render list
 	m_pMeshMngr->ClearRenderList(); //Reset the Render list after render
 	m_pGLSystem->GLSwapBuffers(); //Swaps the OpenGL buffers
-
-	
 }
 
 void AppClass::Release(void)
 {
-	delete[] m_pSphere;
-	delete[] m_pMatrix;
 	super::Release(); //release the memory of the inherited fields
 }
