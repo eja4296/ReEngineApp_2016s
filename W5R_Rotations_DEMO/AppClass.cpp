@@ -1,7 +1,7 @@
 #include "AppClass.h"
 void AppClass::InitWindow(String a_sWindowName)
 {
-	super::InitWindow("RotationsDemo"); // Window Name
+	super::InitWindow("W5R_Rotations_DEMO"); // Window Name
 
 	// Set the clear color based on Microsoft's CornflowerBlue (default in XNA)
 	//if this line is in Init Application it will depend on the .cfg file, if it
@@ -39,19 +39,17 @@ void AppClass::Update(void)
 
 	//Call the arcball method
 	ArcBall();
-
-	//m_v3Orientation = vector3(90.0, 0.0, 0.0);
-
-	m_m4Orientation = glm::rotate(m_m4Orientation,m_v3Orientation.x, vector3(1.0, 0.0, 0.0));
-	m_m4Orientation = glm::rotate(m_m4Orientation, m_v3Orientation.y, vector3(0.0, 1.0, 0.0));
-	m_m4Orientation = glm::rotate(m_m4Orientation, m_v3Orientation.z, vector3(0.0, 0.0, 1.0));
-	//m_m4Orientation = glm::rotate(m_m4Orientation, m_v3Orientation.x, )
-	//glm::rotate()
 	
 	//Set the model matrix for the first model to be the arcball
-	m_pMeshMngr->SetModelMatrix(m_m4Orientation, "Steve");
 	//m_pMeshMngr->SetModelMatrix(ToMatrix4(m_qArcBall), 0);
-	
+
+	//m_m4Steve = glm::scale(m_m4Steve, vector3(1.01f, 1.01f, 1.01f));
+	//m_m4Steve = glm::rotate(m_m4Steve, 1.0f, vector3(0.0f, 1.0f, 0.0f));
+	m_m4Steve = glm::rotate(IDENTITY_M4, m_v3Orientation.x, vector3(1.0f, 0.0f, 0.0f));
+	m_m4Steve = glm::rotate(m_m4Steve, m_v3Orientation.y, vector3(0.0f, 1.0f, 0.0f));
+	m_m4Steve = glm::rotate(m_m4Steve, m_v3Orientation.z, vector3(0.0f, 0.0f, 1.0f));
+	m_pMeshMngr->SetModelMatrix(m_m4Steve, "Steve");
+
 	//Adds all loaded instance to the render list
 	m_pMeshMngr->AddSkyboxToRenderList();
 	m_pMeshMngr->AddInstanceToRenderList("ALL");
@@ -61,6 +59,7 @@ void AppClass::Update(void)
 	//print info into the console
 	//printf("FPS: %d            \r", nFPS);//print the Frames per Second
 	//Print info on the screen
+	m_pMeshMngr->PrintLine("");
 	m_pMeshMngr->PrintLine(m_pSystem->GetAppName(), REYELLOW);
 
 	m_pMeshMngr->Print("Selection: ");
@@ -75,7 +74,7 @@ void AppClass::Display(void)
 	//clear the screen
 	ClearScreen();
 	//Render the grid based on the camera's mode:
-	m_pMeshMngr->AddGridToRenderListBasedOnCamera(m_pCameraMngr->GetCameraMode());
+	//m_pMeshMngr->AddGridToRenderListBasedOnCamera(m_pCameraMngr->GetCameraMode());
 	m_pMeshMngr->Render(); //renders the render list
 	m_pMeshMngr->ClearRenderList(); //Reset the Render list after render
 	m_pGLSystem->GLSwapBuffers(); //Swaps the OpenGL buffers

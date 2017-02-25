@@ -17,7 +17,8 @@ void AppClass::InitVariables(void)
 
 	m_pSun->GenerateSphere(5.936f, 5, REYELLOW);
 	m_pEarth->GenerateTube(0.524f, 0.45f, 0.3f, 10, REBLUE);
-	m_pMoon->GenerateTube(0.524f * 0.27f, 0.45f * 0.27f, 0.3f * 0.27f, 10, REWHITE);
+	m_pMoon->GenerateTube(0.524f * 0.67f, 0.45f * 0.67f, 0.3f * 0.67f, 10, REWHITE);
+
 }
 
 void AppClass::Update(void)
@@ -49,11 +50,31 @@ void AppClass::Update(void)
 #pragma endregion
 
 #pragma region YOUR CODE GOES HERE
-	//Calculate the position of the Earth
-	m_m4Earth = glm::rotate(IDENTITY_M4, m_fEarthTimer, vector3(0.0f, 1.0f, 0.0f));
 
+	//Calculate the position of the Earth
+	// Start at the origin
+	m_m4Earth = glm::translate(IDENTITY_M4, vector3(0.0f, 0.0f, 0.0f));
+	// Have the Earth rotate around the origin (sun) once every 360 days (Counter ClockWise)
+	m_m4Earth = glm::rotate(IDENTITY_M4, m_fEarthTimer, vector3(0.0f, 1.0f, 0.0f));
+	// Move the Earth to it's normal position
+	m_m4Earth *= distanceEarth;
+	// Have the Earth rotate around itself 360 times (once per day)
+	m_m4Earth = glm::rotate(m_m4Earth, m_fEarthTimer * 360, vector3(1.0f, 0.0f, 0.0f));
+	
 	//Calculate the position of the Moon
-	m_m4Moon = glm::rotate(IDENTITY_M4, m_fMoonTimer, vector3(0.0f, 1.0f, 0.0f));
+	// Start at the origin
+	m_m4Moon = glm::translate(IDENTITY_M4, vector3(0.0f, 0.0f, 0.0f));
+	// Have the moon rotate around the origin (sun) once every 360 days, just like the earth (Counter ClockWise)
+	m_m4Moon = glm::rotate(IDENTITY_M4, m_fEarthTimer, vector3(0.0f, 1.0f, 0.0f));
+	// Move to the position of the earth
+	m_m4Moon *= distanceEarth;
+	// Have the moon rotate around the earth once every 28 days (Clockwise)
+	m_m4Moon = glm::rotate(m_m4Moon, m_fMoonTimer, vector3(0.0f, -1.0f, 0.0f));
+	// Move to the normal position of the moon
+	m_m4Moon *= distanceMoon;
+	// Have the moon rotate around itself once every 28 days
+	m_m4Moon = glm::rotate(m_m4Moon, m_fMoonTimer, vector3(1.0f, 0.0f, 0.0f));
+	
 #pragma endregion
 
 #pragma region Print info
