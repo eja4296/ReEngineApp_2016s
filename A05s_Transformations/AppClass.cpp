@@ -17,13 +17,11 @@ void AppClass::InitVariables(void)
 
 	m_pSun->GenerateSphere(5.936f, 5, REYELLOW);
 	m_pEarth->GenerateTube(0.524f, 0.45f, 0.3f, 10, REBLUE);
-	m_pMoon->GenerateTube(0.524f * 0.67f, 0.45f * 0.67f, 0.3f * 0.67f, 10, REWHITE);
-
+	m_pMoon->GenerateTube(0.524f * 0.27f, 0.45f * 0.27f, 0.3f * 0.27f, 10, REWHITE);
 }
 
 void AppClass::Update(void)
 {
-#pragma region Does not need changes
 	//Sets the camera
 	m_pCameraMngr->SetPositionTargetAndView(vector3(0.0f, 25.0f, 0.0f), vector3(0.0f, 0.0f, 0.0f), -REAXISZ);
 
@@ -40,6 +38,9 @@ void AppClass::Update(void)
 	//Call the arcball method
 	ArcBall();
 
+	//Adds all loaded instance to the render list
+	m_pMeshMngr->AddInstanceToRenderList("ALL");
+
 	//This matrices will just orient the objects to the camera
 	matrix4 rotateX = glm::rotate(IDENTITY_M4, 90.0f, vector3(1.0f, 0.0f, 0.0f));
 	matrix4 rotateY = glm::rotate(IDENTITY_M4, 90.0f, vector3(0.0f, 1.0f, 0.0f));
@@ -47,39 +48,29 @@ void AppClass::Update(void)
 	//This matrices will hold the relative transformation of the Moon and the Earth
 	matrix4 distanceEarth = glm::translate(11.0f, 0.0f, 0.0f);
 	matrix4 distanceMoon = glm::translate(2.0f, 0.0f, 0.0f);
-#pragma endregion
 
-#pragma region YOUR CODE GOES HERE
+	//Earth's orbit around the Sun
+	matrix4 orbitEarth = glm::rotate(IDENTITY_M4, m_fEarthTimer, vector3(0.0f, 1.0f, 0.0f));
+	//Earth's rotation on its own axis
+	matrix4 rotationEarth = glm::rotate(IDENTITY_M4, m_fEarthTimer * 28.0f, vector3(0.0f, 1.0f, 0.0f));
 
-	//Calculate the position of the Earth
-	// Start at the origin
-	m_m4Earth = glm::translate(IDENTITY_M4, vector3(0.0f, 0.0f, 0.0f));
-	// Have the Earth rotate around the origin (sun) once every 360 days (Counter ClockWise)
-	m_m4Earth = glm::rotate(IDENTITY_M4, m_fEarthTimer, vector3(0.0f, 1.0f, 0.0f));
-	// Move the Earth to it's normal position
-	m_m4Earth *= distanceEarth;
-	// Have the Earth rotate around itself 360 times (once per day)
-	m_m4Earth = glm::rotate(m_m4Earth, m_fEarthTimer * 360, vector3(0.0f, 0.0f, 1.0f));
-	
-	//Calculate the position of the Moon
-	// Start at the origin
-	m_m4Moon = glm::translate(IDENTITY_M4, vector3(0.0f, 0.0f, 0.0f));
-	// Have the moon rotate around the origin (sun) once every 360 days, just like the earth (Counter ClockWise)
-	m_m4Moon = glm::rotate(IDENTITY_M4, m_fEarthTimer, vector3(0.0f, 1.0f, 0.0f));
-	// Move to the position of the earth
-	m_m4Moon *= distanceEarth;
-	// Have the moon rotate around the earth once every 28 days (Clockwise)
-	m_m4Moon = glm::rotate(m_m4Moon, m_fMoonTimer, vector3(0.0f, -1.0f, 0.0f));
-	// Move to the normal position of the moon
-	m_m4Moon *= distanceMoon;
-	// Have the moon rotate around itself once every 28 days
-	m_m4Moon = glm::rotate(m_m4Moon, m_fMoonTimer, vector3(1.0f, 0.0f, 0.0f));
-	
-#pragma endregion
+	//Moon's orbit around the Earth
+	matrix4 orbitMoon = glm::rotate(IDENTITY_M4, m_fMoonTimer, vector3(0.0f, -1.0f, 0.0f));
+	//Moon's rotation around its own axis
+	matrix4 rotationMoon = glm::rotate(IDENTITY_M4, m_fMoonTimer, vector3(0.0f, 1.0f, 0.0f));
 
-#pragma region Print info
+	//I will calculate the Earth position in space relative to the Sun (which is in global space)
+	matrix4 earthsSpace = orbitEarth * distanceEarth;//the translation depends on the orientation of the space (Earths orbit)
+	m_m4Earth = earthsSpace * rotationEarth;//the rotation of the Earth will depend on the new space
+	m_m4Earth = m_m4Earth * rotateX;//Will orient the Earth to the camera now
+
+	//I will calculate the moon's position in space relative to the Earth (earthsSpace)
+	matrix4 moonsSpace = orbitMoon * distanceMoon;//the moon's translation depends on its orientation (Moons orbit)
+	m_m4Moon = earthsSpace * moonsSpace;//Then we place the moons space in therms of the earth space
+	m_m4Moon = m_m4Moon * rotateY * rotateX;//Then we orient the Moon to the camera)
+
 	printf("Earth Day: %.3f, Moon Day: %.3f\r", m_fEarthTimer, m_fMoonTimer);//print the Frames per Second
-	
+
 	//Indicate the FPS
 	int nFPS = m_pSystem->GetFPS();
 	//Print info on the screen
@@ -91,9 +82,8 @@ void AppClass::Update(void)
 	m_pMeshMngr->PrintLine(std::to_string(m_fMoonTimer), REBLUE);
 	m_pMeshMngr->Print("FPS:");
 	m_pMeshMngr->Print(std::to_string(nFPS), RERED);
-#pragma endregion
 
-	m_fMoonTimer++;//Increase Moon timer
+	m_fMoonTimer++;//Increase moon timer
 	m_fEarthTimer = m_fMoonTimer / 28.0f; //divide by the moon's day
 }
 
@@ -106,7 +96,7 @@ void AppClass::Display(void)
 	m_pSun->Render(m_pCameraMngr->GetProjectionMatrix(), m_pCameraMngr->GetViewMatrix(), m_m4Sun);
 	m_pEarth->Render(m_pCameraMngr->GetProjectionMatrix(), m_pCameraMngr->GetViewMatrix(), m_m4Earth);
 	m_pMoon->Render(m_pCameraMngr->GetProjectionMatrix(), m_pCameraMngr->GetViewMatrix(), m_m4Moon);
-	
+
 	//Render the grid based on the camera's mode:
 	m_pMeshMngr->AddGridToRenderListBasedOnCamera(m_pCameraMngr->GetCameraMode());
 	m_pMeshMngr->Render(); //renders the render list
