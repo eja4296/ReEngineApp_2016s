@@ -149,6 +149,7 @@ void AppClass::Update(void)
 		}
 		else {
 			arrayPositionTracker = 0;
+			percentage = 0.0f;
 		}
 		
 	}
