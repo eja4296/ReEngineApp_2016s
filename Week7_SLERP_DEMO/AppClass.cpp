@@ -49,9 +49,9 @@ void AppClass::Update(void)
 	glm::quat q1; // initializes to identity quaternion
 
 	// last arguement is axis of rotation
-	q1 = glm::quat(0.7f, 0.0f, 0.0f, 0.7f);
+	q1 = glm::quat(0.0, vector3(0.0f, 0.0f, 0.0f));
 	// rotations in radians
-	quaternion q2 = glm::quat(vector3(0.0f,glm::radians(0.0f), 0.0f));
+	quaternion q2 = glm::quat(359.9, vector3(0.0f, 0.0f, 0.0f));
 
 	// first arguement is angle, second is axis of rotation
 	//quaternion q3 = glm::angleAxis(90.0f, vector3(1.0f, 0.0f,0.0f));
@@ -89,6 +89,10 @@ void AppClass::Display(void)
 {
 	//clear the screen
 	ClearScreen();
+
+
+
+
 	//Render the grid based on the camera's mode:
 	m_pMeshMngr->AddGridToRenderListBasedOnCamera(m_pCameraMngr->GetCameraMode());
 	m_pMeshMngr->Render(); //renders the render list

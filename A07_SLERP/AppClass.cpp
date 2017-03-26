@@ -47,10 +47,64 @@ void AppClass::Update(void)
 	float fEarthHalfRevTime = 0.5f * m_fDay; // Move for Half a day
 	float fMoonHalfOrbTime = 14.0f * m_fDay; //Moon's orbit is 28 earth days, so half the time for half a route
 
+	// Planet Matrices
+	m_m4Sun = IDENTITY_M4;
+	m_m4Earth = IDENTITY_M4;
+	m_m4Moon = IDENTITY_M4;
+
+	// Planet sizes for scaling
+	float sunSize = 5.936f;
+	float earthSize = 0.524f;
+	float moonSize = 0.27f * earthSize;
+
+	// SLERP Here
+	// Earth
+	quaternion earthQuat1 = glm::angleAxis(0.0f, vector3(0.0f, 0.0f, 1.0f));
+	quaternion earthQuat2 = glm::angleAxis(359.0f, vector3(0.0f, 0.0f, 1.0f));
+
+	static float fTimer = 0.0f;
+	fTimer += fCallTime;
+
+	float fPercentage = MapValue(fTimer, 0.0f, 359.0f, 0.0f, 1.0f);
+	quaternion earthQuat3 = glm::mix(earthQuat1, earthQuat2, fPercentage);
+	m_m4Earth *= glm::mat4_cast(earthQuat3);
+
+	m_m4Earth = glm::translate(m_m4Earth, vector3(11.0f, 0.0f, 0.0f));
+	
+	float rotationsPerDegree = 365.0f / 360.0f;
+	fPercentage = MapValue(fTimer, 0.0f, rotationsPerDegree, 0.0f, 1.0f);
+	quaternion earthQuat4 = glm::mix(earthQuat1, earthQuat2, fPercentage);
+	m_m4Earth *= glm::mat4_cast(earthQuat4);
+
+
+	// Moon
+	quaternion moonQuat1 = glm::angleAxis(0.0f, vector3(0.0f, 0.0f, 1.0f));
+	quaternion moonQuat2 = glm::angleAxis(359.0f, vector3(0.0f, 0.0f, 1.0f));
+	fPercentage = MapValue(fTimer, 0.0f, 359.0f, 0.0f, 1.0f);
+	quaternion moonQuat3 = glm::mix(moonQuat1, moonQuat2, fPercentage);
+	m_m4Moon *= glm::mat4_cast(moonQuat3);
+
+	m_m4Moon = glm::translate(m_m4Moon, vector3(11.0f, 0.0f, 0.0f));
+
+	fPercentage = MapValue(fTimer, 0.0f, rotationsPerDegree * 28.0f, 0.0f, 1.0f);
+	quaternion moonQuat4 = glm::mix(moonQuat1, moonQuat2, fPercentage);
+	m_m4Moon *= glm::mat4_cast(moonQuat4);
+
+	m_m4Moon = glm::translate(m_m4Moon, vector3(2.0f, 0.0f, 0.0f));
+
+	fPercentage = MapValue(fTimer, 0.0f, rotationsPerDegree * 28.0f, 0.0f, 1.0f);
+	quaternion moonQuat5 = glm::mix(moonQuat1, moonQuat2, fPercentage);
+	m_m4Moon *= glm::mat4_cast(moonQuat5);
+
+	// Scale planets
+	m_m4Sun = glm::scale(m_m4Sun, vector3(sunSize, sunSize, sunSize));
+	m_m4Earth = glm::scale(m_m4Earth, vector3(earthSize, earthSize, earthSize));
+	m_m4Moon = glm::scale(m_m4Moon, vector3(moonSize, moonSize, moonSize));
+
 	//Setting the matrices
-	m_pMeshMngr->SetModelMatrix(IDENTITY_M4, "Sun");
-	m_pMeshMngr->SetModelMatrix(IDENTITY_M4, "Earth");
-	m_pMeshMngr->SetModelMatrix(IDENTITY_M4, "Moon");
+	m_pMeshMngr->SetModelMatrix(m_m4Sun, "Sun");
+	m_pMeshMngr->SetModelMatrix(m_m4Earth, "Earth");
+	m_pMeshMngr->SetModelMatrix(m_m4Moon, "Moon");
 
 	//Adds all loaded instance to the render list
 	m_pMeshMngr->AddInstanceToRenderList("ALL");
@@ -72,13 +126,13 @@ void AppClass::Update(void)
 	m_pMeshMngr->PrintLine(std::to_string(m_fDay));
 
 	m_pMeshMngr->Print("E_Orbits:");
-	m_pMeshMngr->PrintLine(std::to_string(nEarthOrbits));
+	m_pMeshMngr->PrintLine(std::to_string(fRunTime / 365.0f));
 
 	m_pMeshMngr->Print("E_Revolutions:");
-	m_pMeshMngr->PrintLine(std::to_string(nEarthRevolutions));
+	m_pMeshMngr->PrintLine(std::to_string(fRunTime));
 
 	m_pMeshMngr->Print("M_Orbits:");
-	m_pMeshMngr->PrintLine(std::to_string(nMoonOrbits));
+	m_pMeshMngr->PrintLine(std::to_string(fRunTime / 28));
 
 	m_pMeshMngr->Print("FPS:");
 	m_pMeshMngr->Print(std::to_string(nFPS), RERED);
@@ -106,7 +160,7 @@ void AppClass::Display(void)
 	}
 	
 	m_pMeshMngr->Render(); //renders the render list
-
+	m_pMeshMngr->ClearRenderList(); //Reset the Render list after render
 	m_pGLSystem->GLSwapBuffers(); //Swaps the OpenGL buffers
 }
 
