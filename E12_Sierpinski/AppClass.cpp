@@ -73,7 +73,7 @@ void AppClass::Display(void)
 
 	// MY CODE
 	bool drawLeft = true;
-	const int NUM_OF_ITERATIONS = 8;
+	const int NUM_OF_ITERATIONS = 16;
 	int pascalsTriangle[NUM_OF_ITERATIONS][NUM_OF_ITERATIONS];
 
 	// Create Pascal's Triangle
@@ -93,7 +93,8 @@ void AppClass::Display(void)
 	}
 
 	int numOfTrianlges = 1;
-	// Very inefficient
+	
+	// Make Sierpinski's Trianlge
 	for (int i = 0; i < NUM_OF_ITERATIONS; i++) {
 
 		for (int j = 0; j < numOfTrianlges; j++) {
@@ -110,7 +111,36 @@ void AppClass::Display(void)
 		numOfTrianlges++;
 	}
 
-	
+
+	// Tried to do it with only 1 Render call but it would not work
+	/*
+	m_fMatrixArray = new float[m_nObjects * 16];
+	for (int nObject = 0; nObject < m_nObjects; nObject++)
+	{
+		const float* m4MVP;
+
+		for (int i = 0; i < NUM_OF_ITERATIONS; i++) {
+
+			for (int j = 0; j < numOfTrianlges; j++) {
+
+				// compare interation position with position in Pascal's Triangle
+				if (pascalsTriangle[i][j] % 2 == 0) {
+					// DO NOTHING FOR EVEN NUMBERS
+				}
+				else {
+					// DRAW FOR ODD NUMBERS
+					
+					m4MVP = glm::value_ptr(
+						glm::translate(vector3((-i + (j * 2)), -i, 0.0f))
+						);
+					memcpy(&m_fMatrixArray[nObject * 16], m4MVP, 16 * sizeof(float));
+				}
+			}
+			numOfTrianlges++;
+		}
+	}
+	*/
+
 	m_pMeshMngr->Render(); //renders the render list
 	m_pMeshMngr->ClearRenderList(); //Reset the Render list after render
 	m_pGLSystem->GLSwapBuffers(); //Swaps the OpenGL buffers
