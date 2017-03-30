@@ -1,4 +1,5 @@
 #include "AppClass.h"
+
 void AppClass::InitWindow(String a_sWindowName)
 {
 	//Using Base InitWindow method
@@ -13,18 +14,21 @@ void AppClass::InitVariables(void)
 	m_pMesh = new MyMesh();
 	
 	//Creating the Mesh points
-	m_pMesh->AddVertexPosition(vector3(-1.0f, -1.0f, 0.0f));
+	m_pMesh->AddVertexPosition(vector3(-1.0f, 0.0f, 0.0f));
 	m_pMesh->AddVertexColor(RERED);
-	m_pMesh->AddVertexPosition(vector3( 1.0f, -1.0f, 0.0f));
+	m_pMesh->AddVertexPosition(vector3(1.0f, 0.0f, 0.0f));
 	m_pMesh->AddVertexColor(REBLUE);
-	m_pMesh->AddVertexPosition(vector3(-1.0f,  1.0f, 0.0f));
+	m_pMesh->AddVertexPosition(vector3(0.0f, 1.0f, 0.0f));
 	m_pMesh->AddVertexColor(REGREEN);
+
+	/*
 	m_pMesh->AddVertexPosition(vector3(-1.0f,  1.0f, 0.0f));
 	m_pMesh->AddVertexColor(REBLUE);
 	m_pMesh->AddVertexPosition(vector3(1.0f, -1.0f, 0.0f));
 	m_pMesh->AddVertexColor(REBLUE);
 	m_pMesh->AddVertexPosition(vector3( 1.0f, 1.0f, 0.0f));
 	m_pMesh->AddVertexColor(REBLUE);
+	*/
 
 	//Compiling the mesh
 	m_pMesh->CompileOpenGL3X();
@@ -65,13 +69,47 @@ void AppClass::Display(void)
 	matrix4 m4Projection = m_pCameraMngr->GetProjectionMatrix();
 	matrix4 m4View = m_pCameraMngr->GetViewMatrix();
 
-	m_pMesh->Render(m4Projection, m4View, IDENTITY_M4);//Rendering nObject(s)	
+	//m_pMesh->Render(m4Projection, m4View, IDENTITY_M4);//Rendering nObject(s)	
 
-	// Very inefficient
-	for (int i = 0; i < 250; i++) {
-		m_pMesh->Render(m4Projection, m4View, glm::translate(vector3(i, i, 0.0f)));
+	// MY CODE
+	bool drawLeft = true;
+	const int NUM_OF_ITERATIONS = 8;
+	int pascalsTriangle[NUM_OF_ITERATIONS][NUM_OF_ITERATIONS];
+
+	// Create Pascal's Triangle
+	for (int i = 0; i < NUM_OF_ITERATIONS; i++) {
+		
+		for (int j = 0; j < i + 1; j++) {
+			pascalsTriangle[i][j] = 1;
+			if (i >= 2 && j > 0 && j < i) {
+				pascalsTriangle[i][j] = pascalsTriangle[i - 1][j - 1] + pascalsTriangle[i - 1][j];
+			}
+			/*
+			m_pMeshMngr->Print(std::to_string(pascalsTriangle[i][j]));
+			m_pMeshMngr->Print(":");
+			*/
+		}
+		//m_pMeshMngr->PrintLine("");
 	}
-	
+
+	int numOfTrianlges = 1;
+	// Very inefficient
+	for (int i = 0; i < NUM_OF_ITERATIONS; i++) {
+
+		for (int j = 0; j < numOfTrianlges; j++) {
+
+			// compare interation position with position in Pascal's Triangle
+			if (pascalsTriangle[i][j] % 2 == 0) {
+				// DO NOTHING FOR EVEN NUMBERS
+			}
+			else {
+				// DRAW FOR ODD NUMBERS
+				m_pMesh->Render(m4Projection, m4View, glm::translate(vector3((-i + (j * 2)), -i, 0.0f)));
+			}
+		}
+		numOfTrianlges++;
+	}
+
 	
 	m_pMeshMngr->Render(); //renders the render list
 	m_pMeshMngr->ClearRenderList(); //Reset the Render list after render
