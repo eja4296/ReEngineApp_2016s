@@ -15,6 +15,32 @@ void AppClass::Update(void)
 
 #pragma region YOUR CODE GOES HERE
 	modelMatrix = IDENTITY_M4;
+
+	// rotation for 2.5 seconds
+	quaternion quat1 = glm::angleAxis(359.0f, vector3(0.0f, 0.0f, 1.0f));
+	quaternion quat2 = glm::angleAxis(0.0f, vector3(0.0f, 0.0f, 1.0f));
+	static float percentage = 0.0f;
+	percentage = MapValue(fTimer, 0.0f, 2.5f, 0.0f, 1.0f);
+	quaternion quat3 = glm::mix(quat1, quat2, percentage);
+	modelMatrix *= glm::mat4_cast(quat3);
+
+	// translation to 3 units away
+	modelMatrix = glm::translate(modelMatrix, vector3(0.0f, -3.0f, 0.0f));
+
+	// Counteract shield rotation so it always points down
+	quat1 = glm::angleAxis(0.0f, vector3(0.0f, 0.0f, 1.0f));
+	quat2 = glm::angleAxis(359.0f, vector3(0.0f, 0.0f, 1.0f));
+	percentage = 0.0f;
+	percentage = MapValue(fTimer, 0.0f, 2.5f, 0.0f, 1.0f);
+	quat3 = glm::mix(quat1, quat2, percentage);
+	modelMatrix *= glm::mat4_cast(quat3);
+
+	// reset timer and percentage after completing a full roation
+	if (fTimer > 2.5) {
+		percentage = 0;
+		fTimer = 0;
+	}
+
 #pragma endregion
 
 #pragma region DOES NOT NEED CHANGES
