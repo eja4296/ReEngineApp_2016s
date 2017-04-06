@@ -49,6 +49,9 @@ namespace ReEng
 		MeshManagerSingleton* m_pMeshMngr = nullptr;//Mesh Manager
 		CameraManagerSingleton* m_pCameraMngr = nullptr; // Singleton for the camera that represents our scene
 
+		//Camera* m_pCamera = new Camera();
+		
+
 		vector4 m_v4ClearColor; //Color of the scene
 		quaternion m_qArcBall; //ArcBall quaternion
 
