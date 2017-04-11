@@ -63,7 +63,6 @@ void AppClass::Display(void)
 	ClearScreen();
 
 	//m_pPrimitive->Render(m_pCameraMngr->GetProjectionMatrix(), m_pCameraMngr->GetViewMatrix(), ToMatrix4(m_qArcBall));
-	
 	m_pPrimitive->Render(m_pCamera->GetProjection(false), m_pCamera->GetView(),glm::mat4(1.0f)); 
 	//Gets the projection matrix in a glm::mat4 format
 	//Gets the current view matrix in a glm::mat4 format
