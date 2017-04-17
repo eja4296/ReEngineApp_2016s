@@ -24,15 +24,12 @@
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-<<<<<<< HEAD:E05_Repository/E05_Repository.vcxproj.filters
-=======
     <ClCompile Include="MyBoundingSphereClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MyBoundingBoxClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
->>>>>>> 1916e612cfe8ad2068b2a3999ca9918819abc11a:W9R_BoundingSphereDEMO/W9R_BoundingSphereDEMO.vcxproj.filters
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppClass.h">
@@ -41,15 +38,12 @@
     <ClInclude Include="..\res\Resource.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
-<<<<<<< HEAD:E05_Repository/E05_Repository.vcxproj.filters
-=======
     <ClInclude Include="MyBoundingSphereClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MyBoundingBoxClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
->>>>>>> 1916e612cfe8ad2068b2a3999ca9918819abc11a:W9R_BoundingSphereDEMO/W9R_BoundingSphereDEMO.vcxproj.filters
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\res\BTO.rc">
