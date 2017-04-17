@@ -84,20 +84,22 @@ void AppClass::ProcessKeyboard(void)
 	}
 
 	// Rotations
-	/*
+	
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::X))
 	{
-		m_pBS0->SetModelMatrix(glm::rotate(10.0f, vector3(1.0f, 0.0f, 0.0f)));
+		m_v3Rotation.x += 0.1f;
+		
+		
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Y))
 	{
-		m_pBS0->SetModelMatrix(glm::rotate(10.0f, vector3(0.0f, 1.0f, 0.0f)));
+		m_v3Rotation.y += 0.1f;
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
 	{
-		m_pBS0->SetModelMatrix(glm::rotate(10.0f, vector3(0.0f, 0.0f, 1.0f)));
+		m_v3Rotation.z += 0.1f;
 	}
-	*/
+	
 #pragma endregion
 
 #pragma region Other Actions
