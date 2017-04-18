@@ -9,6 +9,7 @@ Date: 2015/09 (Last Modified on: 15/11)
 #include <SFML\Graphics.hpp>
 #include "MyBoundingSphereClass.h"
 #include "MyBoundingBoxClass.h"
+#include "MyRealignedBoundingBoxClass.h"
 
 using namespace ReEng; //Using ReEng namespace to use all the classes in the dll
 
@@ -19,6 +20,8 @@ class AppClass : public ReEngAppClass
 	MyBoundingBoxClass* m_pBS0;
 	MyBoundingBoxClass* m_pBS1;
 	MyBoundingBoxClass* m_pBS2;
+
+	MyRealignedBoundingBoxClass* ReAlignedBox1;
 public:
 	typedef ReEngAppClass super;
 	/*

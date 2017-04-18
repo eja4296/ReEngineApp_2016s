@@ -20,6 +20,8 @@ void AppClass::InitVariables(void)
 	m_pBS1 = new MyBoundingBoxClass(m_pMeshMngr->GetVertexList("Steve"));
 	m_pBS2 = new MyBoundingBoxClass(m_pMeshMngr->GetVertexList("Cow"));
 
+	
+
 	matrix4 m4Position = glm::translate(vector3(3.0, 0.0, 0.0));
 	m_pMeshMngr->SetModelMatrix(m4Position, "Steve");
 
@@ -56,9 +58,6 @@ void AppClass::Update(void)
 	matrix4 mTranslation = glm::translate(v3Current);
 
 	//set the translate to create the transform matrix
-	
-		
-
 	m_pMeshMngr->SetModelMatrix(mTranslation, "Steve");
 	m_pBS1->SetModelMatrix(m_pMeshMngr->GetModelMatrix("Steve"));
 	m_pBS1->RenderSphere();
@@ -100,6 +99,9 @@ void AppClass::Update(void)
 	m_pMeshMngr->SetModelMatrix(m4Transform, "Zombie"); //set the matrix to the model
 	m_pBS0->SetModelMatrix(m_pMeshMngr->GetModelMatrix("Zombie"));
 	m_pBS0->RenderSphere();//render the bounding sphere
+
+	//ReAlignedBox1 = new MyRealignedBoundingBoxClass(m_pMeshMngr->GetVertexList("Zombie"), m_pBS0->GetCenterGlobal, m_pBS0->GetRadius);
+
 
 	//Adds all loaded instance to the render list
 	m_pMeshMngr->AddSkyboxToRenderList();

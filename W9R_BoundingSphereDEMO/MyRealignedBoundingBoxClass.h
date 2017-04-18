@@ -1,7 +1,7 @@
 #pragma once
 #include "RE\ReEng.h"
 
-class MyBoundingBoxClass
+class MyRealignedBoundingBoxClass
 {
 private:
 	float m_fRadius = 0.0f; //radius of the sphere
@@ -11,14 +11,26 @@ private:
 	MeshManagerSingleton* m_pMeshMngr = nullptr; //for drawing the sphere
 	bool m_bColliding = false;
 
+	float m_fRadiusNewBox = 0.0f; //radius of the sphere
+	vector3 m_v3CenterLocalNewBox = vector3(0.0f); //center of the sphere in local space
+	vector3 m_v3CenterGlobalNewBox = vector3(0.0f); //center of the sphere in global space
+	matrix4 m_m4ToWorldNewBox = IDENTITY_M4; //matrix that takes you from local to global space
+
 	vector3 m_v3Max;
 	vector3 m_v3Min;
 	vector3 m_v3Size;
 
+	vector3 m_v3MaxNewBox;
+	vector3 m_v3MinNewBox;
+	vector3 m_v3SizeNewBox;
+
 	vector3 m_v3MaxG;
 	vector3 m_v3MinG;
 	vector3 m_v3SizeG;
-	
+
+	vector3 m_v3MaxNewBoxG;
+	vector3 m_v3MinNewBoxG;
+	vector3 m_v3SizeNewBoxG;
 public:
 	/*
 	Sets Colliding
@@ -57,11 +69,11 @@ public:
 	Gets radius of the sphere
 	*/
 	float GetRadius(void);
-	
+
 	/*
 	Constructor, needs a vertex list
 	*/
-	MyBoundingBoxClass(std::vector<vector3> vertexList);
+	MyRealignedBoundingBoxClass(std::vector<vector3> vertexList, vector3 boxCenter, vector3 boxRadius);
 	/*
 	Renders the sphere based on the radius and the center in global space
 	*/
@@ -74,5 +86,5 @@ public:
 	/*
 	Will check the collision with another object
 	*/
-	bool IsColliding(MyBoundingBoxClass* a_other);
+	bool IsColliding(MyRealignedBoundingBoxClass* a_other);
 };
